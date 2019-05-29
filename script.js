@@ -1,6 +1,6 @@
 'use strict'
 
-function getRepos(){
+function getRepos(userName){
     const url = `https://api.github.com/users/${userName}/repos`;
 
     fetch(url)
@@ -12,16 +12,33 @@ function getRepos(){
             }
         })
         .then(responseJson => displayResults(responseJson))
-        .catch(error => $('#error-message').text(`Something went wrong: ${error.message}`);
+        .catch(error => {
+            $('#error-message').text(`Something went wrong: ${error.message}`);
+        });
+}
+
+function displayResults(responseJson){
+    $('#results-list').empty();
+    for (let i = 0; i < responseJson.length; i++){
+        $('#results-list').append(
+            `<li>
+                <h3>${responseJson[i].name}</h3>
+                <p><a href="${responseJson[i].html_url}" target="_blank">Link to Repository</a></p>
+            </li>`
         );
+        console.log(responseJson[i].name);
+        console.log(responseJson[i].html_url);
+    }
+    console.log('displayResults ran');
 }
 
 function handleSubmit(){
-    $('#submit').submit(event => {
+    $('#submit').click(event => {
         event.preventDefault();
-        let userName = $('input[name=user-name]').val();
+        let userName = $('input[name="user-name"]').val();
+        console.log(userName);
         getRepos(userName);
-    })
+    });
 }
 
 $(handleSubmit);
